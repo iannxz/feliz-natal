@@ -7,7 +7,7 @@
   --title-color: hsl(355, 4%, 15%);
   --text-color: hsl(355, 4%, 35%);
   --text-color-light: hsl(355, 4%, 55%);
-  --body-color: linear-gradient(90deg, #ffffff 0%, #4a1e00 100%);
+  --body-color: linear-gradient(180deg, #ffffff 0%, hsl(355, 40%, 95%) 100%);
   --container-color: #fff;
   --body-font: 'Poppins', sans-serif;
   --biggest-font-size: 1.5rem;
@@ -23,7 +23,6 @@
   --mb-0-5: .5rem;
   --mb-1: 1rem;
   --mb-1-5: 1.5rem;
-  --mb-2: 2rem;
   --mb-2-5: 2.5rem;
   --z-tooltip: 10;
   --z-fixed: 100;
@@ -60,9 +59,8 @@ input {
 
 body {
   margin: var(--header-height) 0 0 0;
-  background-color: var(--body-color);
+  background: var(--body-color);
   color: var(--text-color);
-  transition: .4s;
 }
 
 h1, h2, h3, h4 {
@@ -111,12 +109,11 @@ button {
 
 .header {
   width: 100%;
-  background-color: var(--body-color);
+  background: var(--body-color);
   position: fixed;
   top: 0;
   left: 0;
   z-index: var(--z-fixed);
-  transition: .4s;
 }
 
 .nav {
@@ -139,23 +136,61 @@ button {
 }
 
 .nav__menu {
+  flex: 1;
   display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .nav__list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  row-gap: 1.5rem;
+  gap: 1.5rem;
+}
+
+/* abaixo de 600px: esconde "Celebrar" e "Novo" */
+@media screen and (max-width: 600px) {
+  .nav__item:nth-child(2),
+  .nav__item:nth-child(4) {
+    display: none;
+  }
+}
+
+/* abaixo de 400px: esconde "Presentes" também, sobra só "Home" */
+@media screen and (max-width: 400px) {
+  .nav__item:nth-child(3) {
+    display: none;
+  }
 }
 
 .nav__link {
   color: var(--title-color);
   font-weight: var(--font-medium);
-  transition: .3s;
+  position: relative;
+  transition: color .3s;
 }
 
-.nav__link:hover {
+.nav__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 2px;
+  background-color: var(--first-color);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .3s ease;
+}
+
+.nav__link:hover::after,
+.active-link::after {
+  transform: scaleX(1);
+}
+
+.nav__link:hover,
+.active-link {
   color: var(--first-color);
 }
 
@@ -167,6 +202,7 @@ button {
 .home__img {
   width: 320px;
   justify-self: center;
+  animation: float 4s ease-in-out infinite;
 }
 
 .home__data {
@@ -197,6 +233,41 @@ button {
 
 .button:hover {
   background-color: var(--first-color-alt);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px hsla(355, 70%, 54%, .35);
+}
+
+.scroll-down {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .25rem;
+  color: var(--text-color);
+  margin: 2rem auto 1.5rem;
+  width: fit-content;
+  transition: color .3s;
+}
+
+.scroll-down:hover {
+  color: var(--first-color);
+}
+
+.scroll-down__text {
+  font-size: var(--smaller-font-size);
+  font-weight: var(--font-medium);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .7;
+}
+
+.scroll-down__icon {
+  font-size: 1.5rem;
+  animation: bounce 1.6s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(8px); }
 }
 
 .gift__container {
@@ -211,6 +282,12 @@ button {
   box-shadow: 0 4px 16px hsla(355, 25%, 15%, .1);
   padding: 1.5rem 1rem 1rem;
   border-radius: .75rem;
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.gift__card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px hsla(355, 25%, 15%, .18);
 }
 
 .gift__img {
@@ -227,6 +304,11 @@ button {
   top: 1rem;
   right: 1rem;
   cursor: pointer;
+  transition: transform .3s ease;
+}
+
+.gift__icon:hover {
+  transform: scale(1.4);
 }
 
 .gift__price {
@@ -320,16 +402,23 @@ button {
 
 .footer__link {
   color: var(--text-color);
-  transition: .3s;
+  display: inline-block;
+  transition: color .3s ease, transform .3s ease;
 }
 
 .footer__link:hover {
-  color: var(--title-color);
+  color: var(--first-color);
+  transform: translateX(4px);
 }
 
 .footer__aviable-img {
   width: 100px;
   cursor: pointer;
+  transition: transform .3s ease;
+}
+
+.footer__aviable-img:hover {
+  transform: scale(1.07);
 }
 
 .footer__copy {
@@ -359,7 +448,7 @@ button {
 .scrollup {
   position: fixed;
   right: 1rem;
-  bottom: -30%;
+  bottom: 3rem;
   background-color: var(--container-color);
   box-shadow: 0 4px 12px hsla(0, 0%, 20%, .1);
   display: inline-flex;
@@ -367,11 +456,12 @@ button {
   border-radius: .25rem;
   z-index: var(--z-tooltip);
   opacity: .8;
-  transition: .4s;
+  transition: opacity .4s, transform .3s ease;
 }
 
 .scrollup:hover {
   opacity: 1;
+  transform: translateY(-4px);
 }
 
 .scrollup__icon {
@@ -379,9 +469,6 @@ button {
   color: var(--first-color);
 }
 
-.show-scroll {
-  bottom: 3rem;
-}
 
 ::-webkit-scrollbar {
   width: .6rem;
@@ -409,10 +496,6 @@ button {
   0% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
   100% { transform: translateY(0); }
-}
-
-.home__img {
-  animation: float 4s ease-in-out infinite;
 }
 
 @media screen and (min-width: 576px) {
@@ -446,8 +529,7 @@ button {
   }
 
   .nav__list {
-    flex-direction: row;
-    column-gap: 3rem;
+    gap: 3rem;
   }
 
   .home__container,
